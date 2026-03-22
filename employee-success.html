@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Success</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <h2>ASP Bank</h2>
+</nav>
+
+<div class="container">
+    <h2 style="color:green;">Registration Successful ✅</h2>
+
+    <p><b>ID:</b> <span id="id"></span></p>
+    <p><b>Name:</b> <span id="name"></span></p>
+
+    <button onclick="goDashboard()">Go to Dashboard</button>
+</div>
+
+<script>
+let emp = JSON.parse(localStorage.getItem("employee"));
+
+document.getElementById("id").innerText = emp.empId;
+document.getElementById("name").innerText = emp.fname + " " + emp.lname;
+
+function goDashboard(){
+    window.location.href = "dashboard.html";
+}
+</script>
+
+</body>
+</html>

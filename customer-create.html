@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Customer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <h2>ASP Bank</h2>
+    <div>
+        <a href="index.html">Home</a>
+        <a href="employee-register.html">Employee</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h2>Create Customer</h2>
+
+    <form onsubmit="return validateCustomer()">
+
+    <input type="text" id="name" placeholder="Customer Name">
+    <input type="text" id="account" placeholder="Account Number">
+    <input type="text" id="ifsc" placeholder="IFSC Code">
+    <input type="number" id="balance" placeholder="Balance">
+
+    <input type="text" id="aadhaar" placeholder="Aadhaar Number">
+    <input type="text" id="pan" placeholder="PAN Number">
+
+    <input type="date" id="dob">
+
+    <select id="gender">
+        <option value="">Select Gender</option>
+        <option>Male</option>
+        <option>Female</option>
+    </select>
+
+    <select id="marital">
+        <option value="">Marital Status</option>
+        <option>Single</option>
+        <option>Married</option>
+    </select>
+
+    <textarea id="address" placeholder="Address"></textarea>
+
+    <input type="email" id="email" placeholder="Email">
+    <input type="text" id="contact" placeholder="Contact Number">
+
+    <button type="submit">Create Customer</button>
+
+</form>
+
+<script src="customer.js"></script>
+</body>
+</html>
