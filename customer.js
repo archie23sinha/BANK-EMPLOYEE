@@ -1,95 +1,75 @@
 function validateCustomer() {
-
+    let ssn = document.getElementById("ssn").value.trim();
     let name = document.getElementById("name").value.trim();
-    let account = document.getElementById("account").value.trim();
-    let ifsc = document.getElementById("ifsc").value.trim().toUpperCase();
-    let balance = document.getElementById("balance").value.trim();
     let email = document.getElementById("email").value.trim();
+    let password = document.getElementById("password").value;
+    let confirmPassword = document.getElementById("confirmPassword").value;
+    let address = document.getElementById("address").value.trim();
     let contact = document.getElementById("contact").value.trim();
 
-    // ---------- PATTERNS ----------
-    let namePattern = /^[A-Za-z ]{3,50}$/;
+    // SSN 9 digits
+    if (!/^\d{9}$/.test(ssn)) {
+        alert("SSN must be exactly 9 digits");
+        return false;
+    }
+
+    // Name max 50 chars alphabets
+    if (!/^[A-Za-z ]{1,50}$/.test(name)) {
+        alert("Name max 50 chars, alphabets only");
+        return false;
+    }
+
+    // Email
     let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}$/;
-    let ifscPattern = /^[A-Z]{4}0\d{6}$/;
-    let contactPattern = /^\d{10}$/;
-
-    // ---------- VALIDATIONS ----------
-    if (!namePattern.test(name)) {
-        alert("Name must contain only alphabets (min 3 characters)");
-        return false;
-    }
-
-    if (!/^\d{6,12}$/.test(account)) {
-        alert("Account number must be 6-12 digits");
-        return false;
-    }
-
-    if (!ifscPattern.test(ifsc)) {
-        alert("Invalid IFSC (Example: SBIN0123456)");
-        return false;
-    }
-
-    if (balance === "" || isNaN(balance) || Number(balance) < 0) {
-        alert("Balance must be a valid positive number");
-        return false;
-    }
-
     if (!emailPattern.test(email)) {
-        alert("Invalid Email format (example@gmail.com)");
+        alert("Invalid email");
         return false;
     }
 
-    if (!contactPattern.test(contact)) {
-        alert("Contact must be exactly 10 digits");
+    // Password max 30, min 6
+    if (password.length < 6 || password.length > 30) {
+        alert("Password 6-30 chars");
         return false;
     }
 
-    // ---------- DUPLICATE CHECK ----------
-    let customers = JSON.parse(localStorage.getItem("customers")) || [];
-
-    for (let i = 0; i < customers.length; i++) {
-
-        if (customers[i].email === email) {
-            alert("Email already registered");
-            return false;
-        }
-
-        if (customers[i].contact === contact) {
-            alert("Phone number already registered");
-            return false;
-        }
-
-        if (customers[i].account === account) {
-            alert("Account number already exists");
-            return false;
-        }
+    if (password !== confirmPassword) {
+        alert("Passwords don't match");
+        return false;
     }
 
-    // ---------- SAVE DATA ----------
-    let customerData = {
-        name: name,
-        account: account,
-        ifsc: ifsc,
-        balance: balance,
-        email: email,
-        contact: contact
-    };
+    // Address max 100
+    if (address.length > 100) {
+        alert("Address max 100 chars");
+        return false;
+    }
 
-    customers.push(customerData);
-    localStorage.setItem("customers", JSON.stringify(customers));
+    // Contact 10 digits
+    if (!/^\d{10}$/.test(contact)) {
+        alert("Contact 10 digits");
+        return false;
+    }
 
-    // ---------- POPUP ----------
-    document.getElementById("popupDetails").innerHTML =
-        "👤 Name: " + name + "<br>" +
-        "🏦 Account No: " + account + "<br>" +
-        "🔐 IFSC: " + ifsc;
-
-    document.getElementById("successPopup").style.display = "flex";
-
-    // ---------- REDIRECT ----------
-    setTimeout(() => {
-        window.location.href = "index.html";
-    }, 3000);
-
+    try {
+        const newCustomer = auth.registerCustomer({
+            name: name,
+            email: ssn, // Use SSN as email for login
+            password: password,
+            address: address,
+            contact: contact
+        });
+        document.getElementById("popupDetails").innerHTML = `
+            Customer ID: ${newCustomer.id}<br>
+            Customer Name: ${name}<br>
+            Account Number: ${newCustomer.accountNumber}<br>
+            Email/SSN: ${ssn}<br>
+            Initial Balance: ₹${newCustomer.balance}
+        `;
+        document.getElementById("successPopup").style.display = "flex";
+        setTimeout(() => {
+            window.location.href = "customer-login.html";
+        }, 4000);
+    } catch (error) {
+        alert(error.message);
+    }
     return false;
 }

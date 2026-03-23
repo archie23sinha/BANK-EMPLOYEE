@@ -1,56 +1,56 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Create Customer</title>
+    <title>Customer Registration - US001</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <nav class="navbar">
-    <h2>ASP Bank</h2>
-    <div>
+    <div class="logo">
+        <span class="logo-icon">🏦</span>
+        ASP Bank
+    </div>
+    <div class="nav-links">
         <a href="index.html">Home</a>
-        <a href="employee-register.html">Employee</a>
     </div>
 </nav>
 
 <div class="container">
-    <h2>Create Customer</h2>
+    <h2>Customer Registration</h2>
 
     <form onsubmit="return validateCustomer()">
+        <div id="successPopup" class="popup" style="display: none;">
+            <div class="popup-content">
+                <h2 style="color: #28a745; font-size: 20px;">✓ Customer Registration successful.</h2>
+                <div id="popupDetails" style="text-align: left; font-size: 16px; font-weight: bold;"></div>
+            </div>
+        </div>
 
-    <input type="text" id="name" placeholder="Customer Name">
-    <input type="text" id="account" placeholder="Account Number">
-    <input type="text" id="ifsc" placeholder="IFSC Code">
-    <input type="number" id="balance" placeholder="Balance">
+        <input type="text" id="ssn" placeholder="Customer SSN Id (9 digits)" maxlength="9" required>
+        <input type="text" id="name" placeholder="Customer Name (max 50 chars)" maxlength="50" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Password (max 30 chars)" maxlength="30" required>
+        <input type="password" id="confirmPassword" placeholder="Confirm Password (max 30 chars)" maxlength="30" required>
+        <textarea id="address" placeholder="Address (max 100 chars)" maxlength="100" required></textarea>
+        <input type="text" id="contact" placeholder="Contact Number (10 digits)" maxlength="10" required>
 
-    <input type="text" id="aadhaar" placeholder="Aadhaar Number">
-    <input type="text" id="pan" placeholder="PAN Number">
+        <button type="submit">Register</button>
+    </form>
 
-    <input type="date" id="dob">
+    <a href="index.html">Back</a>
+</div>
 
-    <select id="gender">
-        <option value="">Select Gender</option>
-        <option>Male</option>
-        <option>Female</option>
-    </select>
-
-    <select id="marital">
-        <option value="">Marital Status</option>
-        <option>Single</option>
-        <option>Married</option>
-    </select>
-
-    <textarea id="address" placeholder="Address"></textarea>
-
-    <input type="email" id="email" placeholder="Email">
-    <input type="text" id="contact" placeholder="Contact Number">
-
-    <button type="submit">Create Customer</button>
-
-</form>
-
+<script src="auth.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof auth !== 'undefined') {
+        // Don't update navbar on registration page
+    } else {
+        alert('Auth not loaded');
+    }
+});
+</script>
 <script src="customer.js"></script>
 </body>
 </html>

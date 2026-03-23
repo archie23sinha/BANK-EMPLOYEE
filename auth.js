@@ -55,29 +55,7 @@ class AuthSystem {
         return newCustomer;
     }
 
-    // Register a new employee
-    registerEmployee(employeeData) {
-        const employees = this.getEmployees();
-        const existingEmployee = employees.find(e => e.email === employeeData.email);
 
-        if (existingEmployee) {
-            throw new Error('Email already registered');
-        }
-
-        const newEmployee = {
-            id: Date.now().toString(),
-            ...employeeData,
-            password: this.hashPassword(employeeData.password),
-            employeeId: this.generateEmployeeId(),
-            role: 'employee',
-            createdAt: new Date().toISOString()
-        };
-
-        employees.push(newEmployee);
-        localStorage.setItem('asp_bank_employees', JSON.stringify(employees));
-
-        return newEmployee;
-    }
 
     // Login user
     login(email, password) {
@@ -89,17 +67,6 @@ class AuthSystem {
 
         if (customer) {
             this.currentUser = { ...customer, role: 'customer' };
-            localStorage.setItem('asp_bank_session', JSON.stringify(this.currentUser));
-            this.updateNavbar();
-            return { success: true, user: this.currentUser };
-        }
-
-        // Check employees
-        const employees = this.getEmployees();
-        const employee = employees.find(e => e.email === email && e.password === hashedPassword);
-
-        if (employee) {
-            this.currentUser = { ...employee, role: 'employee' };
             localStorage.setItem('asp_bank_session', JSON.stringify(this.currentUser));
             this.updateNavbar();
             return { success: true, user: this.currentUser };
@@ -134,24 +101,17 @@ class AuthSystem {
             if (!navLinks) return;
 
             // Clear existing dynamic links
-            const existingGreeting = navbar.querySelector('.user-greeting');
             const existingLogout = navbar.querySelector('.logout-btn');
 
-            if (existingGreeting) existingGreeting.remove();
             if (existingLogout) existingLogout.remove();
 
             if (this.currentUser) {
-                // Add user greeting and logout
-                const greeting = document.createElement('span');
-                greeting.className = 'user-greeting';
-                greeting.textContent = `Hello, ${this.currentUser.name || this.currentUser.email}`;
-
+                // Add logout button only
                 const logoutBtn = document.createElement('button');
                 logoutBtn.className = 'logout-btn';
-                logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
+                logoutBtn.innerHTML = 'Logout';
                 logoutBtn.onclick = () => this.logout();
 
-                navLinks.appendChild(greeting);
                 navLinks.appendChild(logoutBtn);
             }
         });
@@ -163,21 +123,14 @@ class AuthSystem {
         return customers ? JSON.parse(customers) : [];
     }
 
-    // Get all employees
-    getEmployees() {
-        const employees = localStorage.getItem('asp_bank_employees');
-        return employees ? JSON.parse(employees) : [];
-    }
+
 
     // Generate account number
     generateAccountNumber() {
         return 'ASP' + Date.now().toString().slice(-8) + Math.floor(Math.random() * 100);
     }
 
-    // Generate employee ID
-    generateEmployeeId() {
-        return 'EMP' + Date.now().toString().slice(-6);
-    }
+
 
     // Transfer money between accounts
     transferMoney(fromAccount, toAccount, amount, description = '') {
@@ -232,6 +185,73 @@ class AuthSystem {
         localStorage.setItem('asp_bank_customers', JSON.stringify(customers));
 
         return transaction;
+    }
+
+    // Withdraw money from own account
+    withdraw(amount) {
+        if (!this.currentUser) {
+            throw new Error('Not logged in');
+        }
+        if (!Number.isFinite(amount) || amount < 1000) {
+            throw new Error('Minimum withdrawal amount is 1000');
+        }
+        const newBalance = this.currentUser.balance - amount;
+        if (newBalance < 500) {
+            throw new Error('Minimum balance should be 500');
+        }
+        
+        const customers = this.getCustomers();
+        const userIndex = customers.findIndex(c => c.id === this.currentUser.id);
+        if (userIndex === -1) throw new Error('User not found');
+        
+        customers[userIndex].balance = newBalance;
+        const transaction = {
+            id: Date.now().toString(),
+            type: 'withdraw',
+            amount: -amount,
+            description: 'Cash withdrawal',
+            date: new Date().toISOString(),
+            balance: newBalance
+        };
+        customers[userIndex].transactions.unshift(transaction);
+        
+        localStorage.setItem('asp_bank_customers', JSON.stringify(customers));
+        this.currentUser = customers[userIndex];
+        localStorage.setItem('asp_bank_session', JSON.stringify(this.currentUser));
+        
+        return { success: true, newBalance, transaction };
+    }
+    
+    // Deposit money to own account
+    deposit(amount) {
+        if (!this.currentUser) {
+            throw new Error('Not logged in');
+        }
+        if (!Number.isFinite(amount) || amount <= 0) {
+            throw new Error('Deposit amount must be positive');
+        }
+        
+        const customers = this.getCustomers();
+        const userIndex = customers.findIndex(c => c.id === this.currentUser.id);
+        if (userIndex === -1) throw new Error('User not found');
+        
+        customers[userIndex].balance += amount;
+        const newBalance = customers[userIndex].balance;
+        const transaction = {
+            id: Date.now().toString(),
+            type: 'deposit',
+            amount: amount,
+            description: `Cash deposit (Ref: ${this.currentUser.accountNumber})`,
+            date: new Date().toISOString(),
+            balance: newBalance
+        };
+        customers[userIndex].transactions.unshift(transaction);
+        
+        localStorage.setItem('asp_bank_customers', JSON.stringify(customers));
+        this.currentUser = customers[userIndex];
+        localStorage.setItem('asp_bank_session', JSON.stringify(this.currentUser));
+        
+        return { success: true, newBalance, transaction };
     }
 
     // Get user transactions
