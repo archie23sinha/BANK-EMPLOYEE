@@ -35,33 +35,46 @@ h3 {
 }
 
 .navbar {
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    padding: 20px 60px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,1) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 1rem 4rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid #0056d2;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    border-bottom: 3px solid #0056d2;
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 1000;
+    transition: all 0.3s ease;
 }
 
 .logo {
-    font-size: 24px;
-    font-weight: 700;
-    color: #003366;
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #003366 0%, #0056d2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     display: flex;
     align-items: center;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 86, 210, 0.2);
 }
 
 .logo-icon {
-    margin-right: 10px;
-    font-size: 28px;
-    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+    margin-right: 0.5rem;
+    font-size: 1.75rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
 
 .hamburger {
@@ -98,10 +111,33 @@ h3 {
     transform: translateY(-10px) rotate(-45deg);
 }
 
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-links a {
+    color: #003366;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    position: relative;
 }
 
 .nav-links a:hover {
-    color: #0056d2;
+    color: white;
+    background: linear-gradient(135deg, #0056d2, #007bff);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 86, 210, 0.3);
+}
+
+.nav-links a.active {
+    background: linear-gradient(135deg, #0056d2, #007bff);
+    color: white;
 }
 
 .logout-btn {
@@ -168,11 +204,14 @@ h3 {
 
 /* SERVICES */
 .services {
-    width: 70%;
-    margin: auto;
+    max-width: 1400px;
+    width: 90%;
+    margin: 0 auto;
     display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
     gap: 20px;
-    padding-bottom: 60px;
+    padding: 60px 20px;
 }
 
 .service-card {
@@ -180,7 +219,8 @@ h3 {
     backdrop-filter: blur(10px);
     padding: 35px;
     border-radius: 16px;
-    width: 100%;
+    flex: 1 1 280px;
+    max-width: 320px;
     border-top: 4px solid #0056d2;
     box-shadow: 0 8px 30px rgba(0,0,0,0.2);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -341,7 +381,8 @@ h3 {
         width: 100%;
         text-align: center;
     }
-}    .nav-links {
+
+    .nav-links {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
@@ -369,20 +410,10 @@ h3 {
         margin: 20px;
     }
 
-    /* Always horizontal on homepage width changes */
+    /* Tablet: smaller gap */
     .services {
-        display: flex;
-        flex-wrap: nowrap;
-        overflow-x: auto;
         gap: 16px;
-        padding: 12px 8px;
-        -webkit-overflow-scrolling: touch;
-        scroll-snap-type: x mandatory;
-    }
-    .service-card {
-        min-width: 260px;
-        flex: 0 0 auto;
-        scroll-snap-align: start;
+        padding: 40px 16px;
     }
 }
 
@@ -424,21 +455,17 @@ h3 {
         padding: 12px 14px;
     }
 
-    /* Stack homepage cards in a single column on mobile */
+    /* Stack homepage cards vertically on mobile */
     .services {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        overflow-x: visible;
-        padding: 0;
-        gap: 14px;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 12px;
+        gap: 16px;
     }
     .service-card {
-        min-width: unset;
         width: 100%;
-        max-width: 100%;
-        flex: 1 1 100%;
-        scroll-snap-align: none;
+        max-width: 400px;
+        flex: none;
     }
 }
 
