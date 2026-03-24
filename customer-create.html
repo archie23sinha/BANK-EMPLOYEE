@@ -30,8 +30,14 @@
         <input type="text" id="ssn" placeholder="Customer SSN Id (9 digits)" maxlength="9" required>
         <input type="text" id="name" placeholder="Customer Name (max 50 chars)" maxlength="50" required>
         <input type="email" id="email" placeholder="Email" required>
-        <input type="password" id="password" placeholder="Password (max 30 chars)" maxlength="30" required>
-        <input type="password" id="confirmPassword" placeholder="Confirm Password (max 30 chars)" maxlength="30" required>
+        <input type="password" id="password" placeholder="Password (8-30 chars, must include uppercase, lowercase, number, special char)" maxlength="30" required oninput="checkPasswordStrength()">
+        <div id="passwordStrength" class="password-strength" style="display: none;">
+            <div class="strength-bar">
+                <div id="strengthFill" class="strength-fill"></div>
+            </div>
+            <div id="strengthText" class="strength-text"></div>
+        </div>
+        <input type="password" id="confirmPassword" placeholder="Confirm Password (8-30 chars, must include uppercase, lowercase, number, special char)" maxlength="30" required>
         <textarea id="address" placeholder="Address (max 100 chars)" maxlength="100" required></textarea>
         <input type="text" id="contact" placeholder="Contact Number (10 digits)" maxlength="10" required>
 
@@ -49,6 +55,15 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         alert('Auth not loaded');
     }
+
+    // Add input validation for numeric fields
+    document.getElementById('ssn').addEventListener('input', function(e) {
+        this.value = this.value.replace(/\D/g, '').substring(0, 9);
+    });
+
+    document.getElementById('contact').addEventListener('input', function(e) {
+        this.value = this.value.replace(/\D/g, '').substring(0, 10);
+    });
 });
 </script>
 <script src="customer.js"></script>

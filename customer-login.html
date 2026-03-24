@@ -31,5 +31,13 @@
 
 <script src="auth.js" defer></script>
 <script src="login.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add input validation for SSN field
+    document.getElementById('ssn').addEventListener('input', function(e) {
+        this.value = this.value.replace(/\D/g, '').substring(0, 9);
+    });
+});
+</script>
 </body>
 </html>

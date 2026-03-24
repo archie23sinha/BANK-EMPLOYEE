@@ -17,6 +17,12 @@
         ASP Bank
     </div>
 
+    <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
     <div class="nav-links">
         <a href="index.html">Home</a>
         <a href="customer-login.html">Customer Login</a>
@@ -67,6 +73,32 @@
 <footer class="footer">
     <p>© 2026 ASP Bank. All Rights Reserved.</p>
 </footer>
+
+<script>
+(function() {
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+
+    if (!hamburger || !navLinks) return;
+
+    hamburger.addEventListener('click', function() {
+        const isOpen = navLinks.classList.toggle('open');
+        hamburger.classList.toggle('active', isOpen);
+        hamburger.setAttribute('aria-expanded', isOpen);
+    });
+
+    // close menu when link is clicked (in mobile)
+    navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            if (navLinks.classList.contains('open')) {
+                navLinks.classList.remove('open');
+                hamburger.classList.remove('active');
+                hamburger.setAttribute('aria-expanded', 'false');
+            }
+        });
+    });
+})();
+</script>
 
 </body>
 </html>

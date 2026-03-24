@@ -35,7 +35,7 @@ class AuthSystem {
         const existingCustomer = customers.find(c => c.email === customerData.email);
 
         if (existingCustomer) {
-            throw new Error('Email already registered');
+            throw new Error('SSN already registered');
         }
 
         const newCustomer = {

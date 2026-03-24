@@ -40,11 +40,11 @@ function renderDashboard(user) {
         
         <div class="operations">
             <div class="card">
-                <h3>💸 Withdraw Money (Min ₹1000)</h3>
-                <p style="color: #666; font-size: 14px;">Minimum balance should be 500 after withdrawal</p>
+                <h3>💸 Withdraw Money</h3>
+                <p style="color: #666; font-size: 14px;">Minimum ₹1,000 | Maximum ₹100,000 | Minimum balance ₹500 after withdrawal</p>
                 <div id="withdrawError" class="error" style="display: none;"></div>
                 <form id="withdrawForm">
-                    <input type="number" id="withdrawAmount" placeholder="Enter amount (min 1000)" min="1000" required>
+                    <input type="number" id="withdrawAmount" placeholder="Enter amount (₹1,000 - ₹100,000)" min="1000" max="100000" step="0.01" required>
                     <button type="submit">Withdraw</button>
                 </form>
             </div>
@@ -52,9 +52,10 @@ function renderDashboard(user) {
             <div class="card">
                 <h3>💰 Deposit Money</h3>
                 <p><strong>Account Ref:</strong> ${user.accountNumber}</p>
+                <p style="color: #666; font-size: 14px;">Minimum ₹100 | Maximum ₹500,000 per transaction</p>
                 <div id="depositError" class="error" style="display: none;"></div>
                 <form id="depositForm">
-                    <input type="number" id="depositAmount" placeholder="Enter deposit amount" min="1" required>
+                    <input type="number" id="depositAmount" placeholder="Enter deposit amount (₹100 - ₹500,000)" min="100" max="500000" step="0.01" required>
                     <button type="submit">Deposit</button>
                 </form>
             </div>
@@ -74,15 +75,51 @@ function setupEventListeners() {
 
 function handleWithdraw(e) {
     e.preventDefault();
-    const amount = parseFloat(document.getElementById('withdrawAmount').value);
+    const amountInput = document.getElementById('withdrawAmount');
+    const amount = parseFloat(amountInput.value);
     const errorDiv = document.getElementById('withdrawError');
-    
+
+    // Clear previous errors
+    errorDiv.style.display = 'none';
+    errorDiv.textContent = '';
+
+    // Validation
+    if (isNaN(amount) || amount <= 0) {
+        errorDiv.textContent = 'Please enter a valid withdrawal amount greater than 0';
+        errorDiv.style.display = 'block';
+        amountInput.focus();
+        return;
+    }
+
+    if (amount < 1000) {
+        errorDiv.textContent = 'Minimum withdrawal amount is ₹1,000';
+        errorDiv.style.display = 'block';
+        amountInput.focus();
+        return;
+    }
+
+    if (amount > 100000) {
+        errorDiv.textContent = 'Maximum withdrawal amount per transaction is ₹100,000';
+        errorDiv.style.display = 'block';
+        amountInput.focus();
+        return;
+    }
+
+    // Check if amount has more than 2 decimal places
+    if (!Number.isInteger(amount * 100)) {
+        errorDiv.textContent = 'Amount cannot have more than 2 decimal places';
+        errorDiv.style.display = 'block';
+        amountInput.focus();
+        return;
+    }
+
     try {
-        errorDiv.style.display = 'none';
         const result = auth.withdraw(amount);
         showSuccessNotification(`✓ Withdrawal successful! New balance: ₹${result.newBalance.toLocaleString()}`);
+        amountInput.value = ''; // Clear the input
         setTimeout(() => {
             renderDashboard(auth.getCurrentUser());
+            setupEventListeners(); // Reattach event listeners after re-rendering
         }, 1500);
     } catch (error) {
         errorDiv.textContent = error.message;
@@ -92,15 +129,51 @@ function handleWithdraw(e) {
 
 function handleDeposit(e) {
     e.preventDefault();
-    const amount = parseFloat(document.getElementById('depositAmount').value);
+    const amountInput = document.getElementById('depositAmount');
+    const amount = parseFloat(amountInput.value);
     const errorDiv = document.getElementById('depositError');
-    
+
+    // Clear previous errors
+    errorDiv.style.display = 'none';
+    errorDiv.textContent = '';
+
+    // Validation
+    if (isNaN(amount) || amount <= 0) {
+        errorDiv.textContent = 'Please enter a valid deposit amount greater than 0';
+        errorDiv.style.display = 'block';
+        amountInput.focus();
+        return;
+    }
+
+    if (amount < 100) {
+        errorDiv.textContent = 'Minimum deposit amount is ₹100';
+        errorDiv.style.display = 'block';
+        amountInput.focus();
+        return;
+    }
+
+    if (amount > 500000) {
+        errorDiv.textContent = 'Maximum deposit amount per transaction is ₹500,000';
+        errorDiv.style.display = 'block';
+        amountInput.focus();
+        return;
+    }
+
+    // Check if amount has more than 2 decimal places
+    if (!Number.isInteger(amount * 100)) {
+        errorDiv.textContent = 'Amount cannot have more than 2 decimal places';
+        errorDiv.style.display = 'block';
+        amountInput.focus();
+        return;
+    }
+
     try {
-        errorDiv.style.display = 'none';
         const result = auth.deposit(amount);
         showSuccessNotification(`✓ Deposit successful! New balance: ₹${result.newBalance.toLocaleString()}`);
+        amountInput.value = ''; // Clear the input
         setTimeout(() => {
             renderDashboard(auth.getCurrentUser());
+            setupEventListeners(); // Reattach event listeners after re-rendering
         }, 1500);
     } catch (error) {
         errorDiv.textContent = error.message;
@@ -125,6 +198,7 @@ function showSuccessNotification(message) {
 
 function checkBalance() {
     renderDashboard(auth.getCurrentUser());
+    setupEventListeners(); // Reattach event listeners after re-rendering
 }
 
 function renderTransactions(transactions) {
