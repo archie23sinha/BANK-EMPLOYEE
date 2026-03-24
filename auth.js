@@ -57,19 +57,54 @@ class AuthSystem {
 
 
 
-    // Login user
-    login(email, password) {
+    // Register a new employee
+    registerEmployee(employeeData) {
+        const employees = this.getEmployees();
+        const existingEmployee = employees.find(e => e.email === employeeData.email);
+
+        if (existingEmployee) {
+            throw new Error('Email already registered');
+        }
+
+        const newEmployee = {
+            id: Date.now().toString(),
+            ...employeeData,
+            password: this.hashPassword(employeeData.password),
+            employeeId: this.generateEmployeeId(),
+            role: 'employee',
+            createdAt: new Date().toISOString()
+        };
+
+        employees.push(newEmployee);
+        localStorage.setItem('asp_bank_employees', JSON.stringify(employees));
+
+        return newEmployee;
+    }
+
+    // Login user (customer or employee)
+    login(email, password, userType = 'customer') {
         const hashedPassword = this.hashPassword(password);
 
-        // Check customers
-        const customers = this.getCustomers();
-        const customer = customers.find(c => c.email === email && c.password === hashedPassword);
+        if (userType === 'customer') {
+            const customers = this.getCustomers();
+            const customer = customers.find(c => c.email === email && c.password === hashedPassword);
 
-        if (customer) {
-            this.currentUser = { ...customer, role: 'customer' };
-            localStorage.setItem('asp_bank_session', JSON.stringify(this.currentUser));
-            this.updateNavbar();
-            return { success: true, user: this.currentUser };
+            if (customer) {
+                this.currentUser = { ...customer, role: 'customer' };
+                localStorage.setItem('asp_bank_session', JSON.stringify(this.currentUser));
+                this.updateNavbar();
+                return { success: true, user: this.currentUser };
+            }
+        } else if (userType === 'employee') {
+            const employees = this.getEmployees();
+            const employee = employees.find(e => e.email === email && e.password === hashedPassword);
+
+            if (employee) {
+                this.currentUser = { ...employee, role: 'employee' };
+                localStorage.setItem('asp_bank_session', JSON.stringify(this.currentUser));
+                this.updateNavbar();
+                return { success: true, user: this.currentUser };
+            }
         }
 
         throw new Error('Invalid email or password');
@@ -123,11 +158,22 @@ class AuthSystem {
         return customers ? JSON.parse(customers) : [];
     }
 
+    // Get all employees
+    getEmployees() {
+        const employees = localStorage.getItem('asp_bank_employees');
+        return employees ? JSON.parse(employees) : [];
+    }
+
 
 
     // Generate account number
     generateAccountNumber() {
         return 'ASP' + Date.now().toString().slice(-8) + Math.floor(Math.random() * 100);
+    }
+
+    // Generate employee ID
+    generateEmployeeId() {
+        return 'EMP' + Date.now().toString().slice(-6) + Math.floor(Math.random() * 1000);
     }
 
 

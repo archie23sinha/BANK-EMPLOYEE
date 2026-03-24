@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Registration - ASP Bank</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo">
+        <span class="logo-icon">🏦</span>
+        ASP Bank
+    </div>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h2>Employee Registration</h2>
+
+    <form onsubmit="return validateEmployee()">
+        <div id="successPopup" class="popup" style="display: none;">
+            <div class="popup-content">
+                <h2 style="color: #28a745; font-size: 20px;">✓ Employee Registration successful.</h2>
+                <div id="popupDetails" style="text-align: left; font-size: 16px; font-weight: bold;"></div>
+            </div>
+        </div>
+
+        <input type="text" id="empid" placeholder="Employee ID (9 digits)" maxlength="9" required>
+        <input type="text" id="name" placeholder="Employee Name (max 50 chars)" maxlength="50" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Password (max 30 chars)" maxlength="30" required>
+        <input type="password" id="confirmPassword" placeholder="Confirm Password (max 30 chars)" maxlength="30" required>
+        <input type="text" id="department" placeholder="Department (max 50 chars)" maxlength="50" required>
+        <input type="text" id="position" placeholder="Position/Designation (max 50 chars)" maxlength="50" required>
+        <input type="text" id="contact" placeholder="Contact Number (10 digits)" maxlength="10" required>
+
+        <button type="submit">Register</button>
+    </form>
+
+    <a href="index.html">Back</a>
+</div>
+
+<script src="auth.js"></script>
+<script src="employee.js"></script>
+</body>
+</html>
